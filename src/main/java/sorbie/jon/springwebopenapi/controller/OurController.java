@@ -19,7 +19,7 @@ public class OurController {
     }
 
     @GetMapping("/items/{itemNumber}")
-    public ResponseEntity<Item> getItem(@PathVariable Integer itemNumber) {
+    public ResponseEntity<Item> getItem(@PathVariable Long itemNumber) {
         log.info("GET /items, itemNumber: {}", itemNumber);
         Item item = new Item(itemNumber, "Haribo Goldbears", "Delicious Gummy Candy");
         return new ResponseEntity<>(item, OK);
