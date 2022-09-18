@@ -24,4 +24,10 @@ public class OurController {
         Item item = new Item(itemNumber, "Haribo Goldbears", "Delicious Gummy Candy");
         return new ResponseEntity<>(item, OK);
     }
+
+    @PostMapping("/items")
+    public ResponseEntity<Item> postItem(@RequestBody Item item) {
+        log.info("POST /items, itemNumber: {}", item.itemNumber);
+        return new ResponseEntity<>(item, OK);
+    }
 }
