@@ -12,49 +12,29 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenApi() {
-        return customOpenApi("http://myDocumentationUrl",
-                             "An API with items and customers",
-                             "a@b.com",
-                             "Joe Developer",
-                             "Spring Web OpenAPI Demo",
-                             "1.2",
-                             "TBD",
-                             "https://myOauthTokenUrl",
-                             "https://myOauthServerUrl");
-    }
-
-    private static OpenAPI customOpenApi(String confluenceUrl,
-                                         String description,
-                                         String contactEmail,
-                                         String contactName,
-                                         String applicationName,
-                                         String applicationVersion,
-                                         String scope,
-                                         String accessTokenUrl,
-                                         String oAuthServerUrl) {
-        SecurityScheme securityScheme = oauth(scope, accessTokenUrl, oAuthServerUrl);
+        SecurityScheme securityScheme = oauth();
         Contact contact = new Contact()
-            .email(contactEmail)
-            .name(contactName)
-            .url(confluenceUrl);
+            .email("a@b.com")
+            .name("Joe Developer")
+            .url("http://myDocumentationUrl");
         Info info = new Info()
-            .title(applicationName)
-            .description(description)
-            .version(applicationVersion)
+            .title("Spring Web OpenAPI Demo")
+            .description("An API with items and customers")
+            .version("1.2")
             .contact(contact);
         return new OpenAPI()
             .components(new Components())
-            .schemaRequirement(applicationName, securityScheme)
+            .schemaRequirement("Spring Web OpenAPI Demo", securityScheme)
             .info(info);
     }
 
-    private static SecurityScheme oauth(String scope, String accessTokenUrl, String oAuthServerUrl) {
+    private static SecurityScheme oauth() {
         Scopes fullReadAccess = new Scopes()
-            .addString(scope, "Full Read Access");
+            .addString("TBD", "Full Read Access");
         OAuthFlow oAuthFlow = new OAuthFlow()
-            .authorizationUrl(accessTokenUrl)
+            .authorizationUrl("https://myOauthTokenUrl")
             .scopes(fullReadAccess)
-            .tokenUrl(oAuthServerUrl)
+            .tokenUrl("https://myOauthServerUrl")
             .scopes(fullReadAccess);
         OAuthFlows oAuthFlows = new OAuthFlows()
             .clientCredentials(oAuthFlow);
