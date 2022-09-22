@@ -1,65 +1,51 @@
 package sorbie.jon.springwebopenapi.config;
 
-import io.swagger.v3.oas.models.*;
-import io.swagger.v3.oas.models.info.*;
-import io.swagger.v3.oas.models.security.*;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Configuration;
 
-import static io.swagger.v3.oas.models.security.SecurityScheme.Type.*;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.OAuthFlow;
+import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.annotations.security.OAuthScope;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 
 @Configuration
+@OpenAPIDefinition( //
+		info = @Info( //
+				title = "Open API Demo", //
+				description = "A demo of using OpenAPI to automatically generate documentation", //
+				version = "1.0.0", //
+				contact = @Contact(name = "Christopher Peterson", //
+						email = "christopher.peterson@thrivent.com") //
+		), //
+		externalDocs = @ExternalDocumentation( //
+				url = "https://confluence.digital.thrivent.com/example/", //
+				description = "Consumption Guide"), //
+		servers = { //
+				@Server( //
+						url = "https://example.com/api/", //
+						description = "API URL") //
+		} //
+)
+@SecurityScheme( //
+type = SecuritySchemeType.OAUTH2, //
+name = "oauth2", //
+description = "Open Authorization version 2", //
+flows = @OAuthFlows( //
+		clientCredentials = @OAuthFlow( //
+				authorizationUrl = "https://www.example.com/authorize", //
+				tokenUrl = "https://www.example.com/token", //
+				refreshUrl = "https://www.example.com/refresh", //
+				scopes = { //
+						@OAuthScope(name = "openapidemo.view", description = "allows GET requests only"), //
+						@OAuthScope(name = "openapidemo.all", description = "allows ALL requests") //
+						} //
+				) //
+		) //
+)
 public class OpenApiConfig {
-
-    @Bean
-    public OpenAPI customOpenApi() {
-        return customOpenApi("http://myDocumentationUrl",
-                             "An API with items and customers",
-                             "a@b.com",
-                             "Joe Developer",
-                             "Spring Web OpenAPI Demo",
-                             "1.2",
-                             "TBD",
-                             "https://myOauthTokenUrl",
-                             "https://myOauthServerUrl");
-    }
-
-    private static OpenAPI customOpenApi(String confluenceUrl,
-                                         String description,
-                                         String contactEmail,
-                                         String contactName,
-                                         String applicationName,
-                                         String applicationVersion,
-                                         String scope,
-                                         String accessTokenUrl,
-                                         String oAuthServerUrl) {
-        SecurityScheme securityScheme = oauth(scope, accessTokenUrl, oAuthServerUrl);
-        Contact contact = new Contact()
-            .email(contactEmail)
-            .name(contactName)
-            .url(confluenceUrl);
-        Info info = new Info()
-            .title(applicationName)
-            .description(description)
-            .version(applicationVersion)
-            .contact(contact);
-        return new OpenAPI()
-            .components(new Components())
-            .schemaRequirement(applicationName, securityScheme)
-            .info(info);
-    }
-
-    private static SecurityScheme oauth(String scope, String accessTokenUrl, String oAuthServerUrl) {
-        Scopes fullReadAccess = new Scopes()
-            .addString(scope, "Full Read Access");
-        OAuthFlow oAuthFlow = new OAuthFlow()
-            .authorizationUrl(accessTokenUrl)
-            .scopes(fullReadAccess)
-            .tokenUrl(oAuthServerUrl)
-            .scopes(fullReadAccess);
-        OAuthFlows oAuthFlows = new OAuthFlows()
-            .clientCredentials(oAuthFlow);
-        return new SecurityScheme()
-            .type(OAUTH2)
-            .flows(oAuthFlows);
-    }
 }
